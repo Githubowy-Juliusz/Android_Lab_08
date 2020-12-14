@@ -32,10 +32,11 @@ class SnowParticle(
 		if(invisible) {
 			colorizer.paintColor()
 			invisible = false
-			return
 		}
-		val location = IntArray(2)
-		location[0]
+	}
 
+	fun paintInivisible() {
+		colorizer.paintInvisible()
+		invisible = true
 	}
 }

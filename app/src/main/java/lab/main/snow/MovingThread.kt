@@ -2,7 +2,6 @@ package lab.main.snow
 
 import android.content.res.Resources
 import android.graphics.PointF
-import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
@@ -40,11 +39,11 @@ class MovingThread(
 		val positions = List<PointF>(snowParticles.size) { index: Int ->
 			val x = Random.nextInt(screenWidth)
 			val y = Random.nextInt(topOffset, screenHeight - bottomOffset)
-			runOnUiThread(Runnable { snowParticles[index].mover.move(x, y) })
+			runOnUiThread(Runnable {
+				snowParticles[index].paintInivisible()
+				snowParticles[index].mover.move(x, y)
+			})
 			PointF(x.toFloat(), y.toFloat())
-		}
-		for(position in positions) {
-			Log.d("Hello", "$position")
 		}
 
 		var last = System.currentTimeMillis()

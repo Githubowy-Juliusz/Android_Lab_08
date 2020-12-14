@@ -23,8 +23,9 @@ class RectColorizer(
 	}
 
 	fun paintInvisible() {
-		paint.color = 0
-		canvas.drawPaint(paint)
+//		paint.color = 0
+//		canvas.drawPaint(paint)
+		bitmap.eraseColor(0)
 	}
 
 	fun paintColor() {

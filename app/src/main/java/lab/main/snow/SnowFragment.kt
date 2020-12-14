@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import lab.main.R
+import kotlin.random.Random
 
 class SnowFragment(
 	private val runOnUiThread: (action: Runnable) -> Unit
@@ -14,24 +15,27 @@ class SnowFragment(
 	Fragment(
 		R.layout.snow_fragment
 	) {
-	private val snowSize = 5
-
+	private val snowSize = 8
 	private val topOffset = 0
 	private val bottomOffset = 0
-
-	//	private val topOffset = 195
-//	private val bottomOffset = 220
 	private val backgroundSnowColor = 0xFFABBDBA.toInt()
 	private val foregroundSnowColor = 0xFFD7F4EF.toInt()
 
 	private lateinit var movingThread1: MovingThread
 	private lateinit var movingThread2: MovingThread
+	private lateinit var foregroundPainter: SnowPainter
+	private lateinit var backgroundPainter: SnowPainter
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		val layout = view.findViewById<ConstraintLayout>(R.id.snowLayout)
 		val background = view.findViewById<ImageView>(R.id.snowBackground)
 		val foreground = view.findViewById<ImageView>(R.id.snowForeground)
 		val restartButton = view.findViewById<Button>(R.id.snowRestartButton)
+
+		foregroundPainter =
+			SnowPainter(foreground, foregroundSnowColor, snowSize, 1, runOnUiThread)
+		backgroundPainter =
+			SnowPainter(background, backgroundSnowColor, snowSize, 3, runOnUiThread)
 
 		fun createSnow(type: String, amount: Int): List<SnowParticle> {
 			val particles = mutableListOf<SnowParticle>()
@@ -41,7 +45,13 @@ class SnowFragment(
 			else
 				backgroundSnowColor
 
+			val painter = if(type == "Foreground")
+				foregroundPainter
+			else
+				backgroundPainter
+
 			for(i in 1..amount) {
+				val size = Random.nextInt(1, snowSize)
 				val snowParticle = this.context?.let {
 					SnowParticle(
 						snowSize, topOffset, bottomOffset, it, layout, color
@@ -58,7 +68,7 @@ class SnowFragment(
 		val backgroundSnow = createSnow("Background", 100)
 		val wind = Wind()
 		val speed = 500f
-		
+
 		movingThread1 =
 			MovingThread(
 				speed * 0.85f, wind, foregroundSnow, runOnUiThread
@@ -69,10 +79,14 @@ class SnowFragment(
 
 		movingThread1.restart()
 		movingThread2.restart()
+		foregroundPainter.restart()
+		backgroundPainter.restart()
 
 		restartButton.setOnClickListener {
 			movingThread1.restart()
 			movingThread2.restart()
+			foregroundPainter.restart()
+			backgroundPainter.restart()
 		}
 	}
 
@@ -80,5 +94,7 @@ class SnowFragment(
 		super.onDestroyView()
 		movingThread2.stop()
 		movingThread2.stop()
+		foregroundPainter.stop()
+		backgroundPainter.stop()
 	}
 }
