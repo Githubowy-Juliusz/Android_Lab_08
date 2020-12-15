@@ -22,7 +22,7 @@ class SnowParticle(
 	init {
 		view = ImageView(context)
 		mover = RectMover(view, size, size, topOffset, bottomOffset)
-		layout.addView(view)
+		layout.addView(view, 0)
 		colorizer =
 			RectColorizer(view, size, size, color)
 		colorizer.paintInvisible()

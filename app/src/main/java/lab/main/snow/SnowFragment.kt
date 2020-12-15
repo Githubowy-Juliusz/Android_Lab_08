@@ -15,7 +15,7 @@ class SnowFragment(
 	Fragment(
 		R.layout.snow_fragment
 	) {
-	private val snowSize = 8
+	private val maxSnowSize = 8
 	private val topOffset = 0
 	private val bottomOffset = 0
 	private val backgroundSnowColor = 0xFFABBDBA.toInt()
@@ -33,9 +33,21 @@ class SnowFragment(
 		val restartButton = view.findViewById<Button>(R.id.snowRestartButton)
 
 		foregroundPainter =
-			SnowPainter(foreground, foregroundSnowColor, snowSize, 1, runOnUiThread)
+			SnowPainter(
+				foreground,
+				foregroundSnowColor,
+				maxSnowSize,
+				1,
+				runOnUiThread
+			)
 		backgroundPainter =
-			SnowPainter(background, backgroundSnowColor, snowSize, 3, runOnUiThread)
+			SnowPainter(
+				background,
+				backgroundSnowColor,
+				maxSnowSize,
+				2,
+				runOnUiThread
+			)
 
 		fun createSnow(type: String, amount: Int): List<SnowParticle> {
 			val particles = mutableListOf<SnowParticle>()
@@ -45,16 +57,11 @@ class SnowFragment(
 			else
 				backgroundSnowColor
 
-			val painter = if(type == "Foreground")
-				foregroundPainter
-			else
-				backgroundPainter
-
 			for(i in 1..amount) {
-				val size = Random.nextInt(1, snowSize)
+				val size = Random.nextInt(1, maxSnowSize)
 				val snowParticle = this.context?.let {
 					SnowParticle(
-						snowSize, topOffset, bottomOffset, it, layout, color
+						size, topOffset, bottomOffset, it, layout, color
 					)
 				}
 				if(snowParticle != null) {
@@ -77,16 +84,16 @@ class SnowFragment(
 			speed, wind, backgroundSnow, runOnUiThread
 		)
 
-		movingThread1.restart()
-		movingThread2.restart()
-		foregroundPainter.restart()
-		backgroundPainter.restart()
-
-		restartButton.setOnClickListener {
+		fun restart() {
 			movingThread1.restart()
 			movingThread2.restart()
 			foregroundPainter.restart()
 			backgroundPainter.restart()
+		}
+		restart()
+
+		restartButton.setOnClickListener {
+			restart()
 		}
 	}
 

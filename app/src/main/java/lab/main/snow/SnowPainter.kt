@@ -54,9 +54,10 @@ class SnowPainter(
 			val x = Random.nextFloat() * screenWidth
 			val y = screenHeight.toFloat() - snowHeight[x.toInt()]
 			drawOval(x.toInt(), y.toInt())
-			snowHeight[x.toInt()] += 2
+			snowHeight[x.toInt()] += 1
 			Thread.sleep((16 / speed).toLong())
 		}
+		runOnUiThread(Runnable { bitmap.eraseColor(Color.TRANSPARENT) })
 	}
 
 	private fun drawOval(x: Int, y: Int) {
